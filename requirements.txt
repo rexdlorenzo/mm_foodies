@@ -4,3 +4,4 @@ folium
 scikit-learn
 streamlit
 streamlit_folium
+geopandas
