@@ -1,0 +1,7 @@
+[theme]
+# Background color for the main content area.
+primaryColor = "#0C031E"
+backgroundColor = "#0C031E"
+secondaryBackgroundColor = "#2B1E4F"
+textColor = "#FFFFFF"
+#font =
