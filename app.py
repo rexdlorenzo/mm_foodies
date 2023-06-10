@@ -5,7 +5,6 @@ from sklearn.preprocessing import OneHotEncoder, MaxAbsScaler
 from sklearn.metrics.pairwise import cosine_similarity
 import streamlit as st
 from streamlit_folium import folium_static
-from st_aggrid import AgGrid
 import pickle
 import base64
 
