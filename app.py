@@ -251,7 +251,7 @@ def add_bg_from_local(image_file):
 def main():
     add_bg_from_local('background.jpg')
     # Streamlit app
-    st.title('Restaurant Recommendation Engine')
+    st.title('MM Foodies')
 
     sort_options = ['Default', 'Cuisine', 'Type of Restaurant', 'City', 'Rating']
 
