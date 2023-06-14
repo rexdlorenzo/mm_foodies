@@ -143,6 +143,7 @@ def display_map(recommendations, city):
     #create folium map centered on Metro Manila
     map = folium.Map(location=[latitude, longitude], zoom_start=12)
 
+
     # for address reverse lookup
     # geolocator = Nominatim(user_agent="MM_Restau_Recomm_System")  
     
@@ -247,12 +248,12 @@ def add_bg_from_local(image_file):
         unsafe_allow_html=True
     )
 
-
 def main():
     add_bg_from_local('background.jpg')
     # Streamlit app
     st.title('Restaurant Recommendation Engine')
 
+    sort_options = ['Default', 'Cuisine', 'Type of Restaurant', 'City', 'Rating']
 
     with st.sidebar.form(key='my_form'):
         
@@ -260,10 +261,11 @@ def main():
 
         # Dropdown menus for cuisine, restaurant type, and city
         # Create two columns
+        cuisine = st.selectbox('Cuisine', cuisines)
+        
         col1a, col2a= st.columns(2)
-        cuisine = col1a.selectbox('Cuisine', cuisines)
-        restau_type = col2a.selectbox('Type of Restaurant', types_of_restau)
-        city = st.selectbox('City', cities)
+        restau_type = col1a.selectbox('Type of Restaurant', types_of_restau)
+        city = col2a.selectbox('City', cities)
 
         # Define the price bucket options
         st.write('Price Bucket Filter')
@@ -285,7 +287,10 @@ def main():
                 price_buckets[option] = col2b.checkbox(option, value = True)
             # Slider for the number of recommendations
             
-        num_recommendations = st.slider('Number of Recommendations', min_value=1, max_value=20, value=5)
+        col1c, col2c= st.columns(2)
+        num_recommendations = col1c.slider('Number of Recommendations', min_value=1, max_value=20, value=5)
+
+        sort_order = col2c.selectbox('Sort Order', sort_options)
 
         # Button to trigger the recommendations
         submit_button = st.form_submit_button('Get Recommendations')
