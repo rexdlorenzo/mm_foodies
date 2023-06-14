@@ -163,8 +163,8 @@ def display_map(recommendations, city):
 
         # create popup text
 
-        price_bucket_descriptions = {'inexpensive': 'below ₱560.80', 'moderate': ' ₱616.88 - ₱1,682.40', 
-                                     'expensive': '₱1,738.48 - ₱3,364.80 ', 'very expensive': 'more than ₱3,364.80' }
+        price_bucket_descriptions = {'inexpensive': 'below ₱250', 'moderate': '₱250 - ₱450',
+                                     'expensive': '₱450 - ₱650', 'very expensive': 'above ₱650' }
         popup = folium.Popup(f"Restaurant Name: {row['Restaurant Name']}<br>Cuisine: {row['Cuisine']}<br>Type: {row['Type of Restaurant']}<br>Rating: {row['Rating']}\
                              <br>Price Bucket: {row['Price Bucket']} (cost per person: {price_bucket_descriptions[row['Price Bucket']]})" + distance_popup, max_width=500)
                              #<br>Address: {address}", max_width=500)
