@@ -252,7 +252,11 @@ def main():
     add_bg_from_local('background.jpg')
     # Streamlit app
     st.title('MM Foodies')
-
+    
+    st.markdown('<style>#placeholder{display:block;}</style>', unsafe_allow_html=True)
+    st.markdown('<div id="placeholder">Looking for the perfect restaurant? Our recommendation engine has got you covered! Simply input your <em>city</em>, preferred <em>cuisine</em>, <em/>type of restaurant</em> and <em>price range</em> and let us do the rest. Our engine will <strong>prioritize</strong> <em>less popular</em> but <em>highly rated</em> restaurants and even recommend nearby options if there are less exact matches than you wanted. So sit back, relax and let us help you find your next favorite dining spot!</div>', unsafe_allow_html=True)
+    
+    sort_options = ['Default', 'Cuisine', 'Type of Restaurant', 'City', 'Rating']
 
     with st.sidebar.form(key='my_form'):
         
@@ -295,6 +299,8 @@ def main():
         
         selected_price_buckets = [key for key,value in price_buckets.items() if value == True]
 
+        st.markdown('<style>#placeholder{display:none;}</style>', unsafe_allow_html=True)
+        
         if len(selected_price_buckets) == 0:
             st.error("Please check at least one price bucket.")
             
@@ -318,8 +324,9 @@ def main():
             
             # Apply the formatting function Rating
             formatted_data = recommendations_for_table.style.format({'Rating': format_1_decimal_place})
-
+            
             # Display the formatted table and map in Streamlit
+    
             st.table(formatted_data)
             display_map(recommendations_for_map, city)
 
