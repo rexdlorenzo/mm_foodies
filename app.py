@@ -264,10 +264,10 @@ def main():
 
         # Dropdown menus for cuisine, restaurant type, and city
         # Create two columns
+        cuisine = st.selectbox('Cuisine', cuisines)
         col1a, col2a= st.columns(2)
-        cuisine = col1a.selectbox('Cuisine', cuisines)
-        restau_type = col2a.selectbox('Type of Restaurant', types_of_restau)
-        city = st.selectbox('City', cities)
+        restau_type = col1a.selectbox('Type of Restaurant', types_of_restau)
+        city = col2a.selectbox('City', cities)
 
         # Define the price bucket options
         st.write('Price Bucket Filter')
