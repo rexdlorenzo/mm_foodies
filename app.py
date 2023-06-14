@@ -11,7 +11,7 @@ import base64
 #from geopy.geocoders import Nominatim
 
 # Load the restaurant data from the CSV file
-data = pd.read_csv('KNNImputed_ne3_cleaned.csv')
+data = pd.read_csv('KNNImputed_ne3_cleaned_fixed_distances.csv')
 
 data = data.rename(columns={"name": "Restaurant Name", "Type of Restau": "Type of Restaurant", "city": "City"})
 
