@@ -256,7 +256,7 @@ def main():
 
     with st.sidebar.form(key='my_form'):
         
-        st.title('Parameters')
+        st.title('What are you in the mood for?')
 
         # Dropdown menus for cuisine, restaurant type, and city
         # Create two columns
