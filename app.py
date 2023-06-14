@@ -157,7 +157,7 @@ def display_map(recommendations, city):
         #address = geolocator.reverse(f"{restau_lat}, {restau_lon}").address
     
         distance_to_city = recommendations[f"Distance to {city}"].loc[i]
-        city_popup = f"<b>City: {recommendations['City'].loc[i]}" if (distance_to_city > 0) else ""
+        city_popup = f"<br>City: {recommendations['City'].loc[i]}" if (distance_to_city > 0) else ""
         distance_popup =  f"<br>Distance to {city}: {format_distance(distance_to_city)} (Straight-line distance to the closest border of the city)" if (distance_to_city > 0) else ""
 
         # create popup text
