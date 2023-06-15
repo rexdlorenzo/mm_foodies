@@ -157,7 +157,7 @@ def display_map(recommendations, city):
         #address = geolocator.reverse(f"{restau_lat}, {restau_lon}").address
     
         distance_to_city = recommendations[f"Distance to {city}"].loc[i]
-        city_popup = f"<br>City: {recommendations['City'].loc[i]}" if (distance_to_city > 0) else ""
+        #city_popup = f"<br>City: {recommendations['City'].loc[i]}" if (distance_to_city > 0) else ""
         distance_popup =  f"<br>Distance to {city}: {format_distance(distance_to_city)} (Straight-line distance to the closest border of the city)" if (distance_to_city > 0) else ""
 
         # create popup text
@@ -165,7 +165,7 @@ def display_map(recommendations, city):
         price_bucket_descriptions = {'inexpensive': 'below ₱250', 'moderate': '₱250 - ₱450',
                                      'expensive': '₱450 - ₱650', 'very expensive': 'above ₱650' }
         popup = folium.Popup(f"Restaurant Name: {row['Restaurant Name']}<br>Cuisine: {row['Cuisine']}<br>Type: {row['Type of Restaurant']}<br>Rating: {row['Rating']}\
-                             <br>Price Bucket: {row['Price Bucket']} (cost per person: {price_bucket_descriptions[row['Price Bucket']]})" + city_popup + distance_popup, max_width=500)
+                             <br>Price Bucket: {row['Price Bucket']} (cost per person: {price_bucket_descriptions[row['Price Bucket']]})" + distance_popup, max_width=500)
                              #<br>Address: {address}", max_width=500)
         
         # add restaurant name as label for markers
