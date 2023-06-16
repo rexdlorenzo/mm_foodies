@@ -7,9 +7,6 @@ import streamlit as st
 from streamlit_folium import folium_static
 import pickle
 import base64
-from st_aggrid import GridOptionsBuilder, AgGrid, GridUpdateMode, DataReturnMode, ColumnsAutoSizeMode, AgGridTheme
-
-#from geopy.geocoders import Nominatim
 
 # Load the restaurant data from the CSV file
 data = pd.read_csv('KNNImputed_ne3_cleaned_fixed_distances.csv')
