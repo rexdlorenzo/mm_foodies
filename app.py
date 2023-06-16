@@ -7,6 +7,7 @@ import streamlit as st
 from streamlit_folium import folium_static
 import pickle
 import base64
+from st_aggrid import GridOptionsBuilder, AgGrid, GridUpdateMode, DataReturnMode, ColumnsAutoSizeMode, AgGridTheme
 
 #from geopy.geocoders import Nominatim
 
@@ -91,7 +92,7 @@ def get_recommendations(cuisine, restau_type, city, selected_price_buckets, num_
 
         if len(exact_matches) >= num_recommendations:
             # Return the recommended restaurants from exact matches as a DataFrame
-            return data.loc[top_exact_indices, ['Restaurant Name', 'Cuisine', 'Type of Restaurant', 'City', 'Review Count', 'Rating', 'Latitude', 'Longitude', 'Price Bucket', 'Reviews', 'Similarity Score', f"Distance to {city}"]]
+            return data.loc[top_exact_indices, ['Restaurant Name', 'Cuisine', 'Type of Restaurant', 'City', 'Review Count', 'Rating', 'Latitude', 'Longitude', 'Price Bucket', 'Reviews', 'Similarity Score', f"Distance to {city}", 'Old Price Bucket']]
         else:
             remaining_recommendations = num_recommendations - len(exact_matches)
  
@@ -113,7 +114,7 @@ def get_recommendations(cuisine, restau_type, city, selected_price_buckets, num_
             recommended_indices = top_exact_indices + top_remaining_indices
 
             # Return the recommended restaurants as a DataFrame
-            return data.loc[recommended_indices, ['Restaurant Name', 'Cuisine', 'Type of Restaurant', 'City', 'Review Count', 'Rating', 'Latitude', 'Longitude', 'Price Bucket', 'Reviews', 'Similarity Score', f"Distance to {city}"]]
+            return data.loc[recommended_indices, ['Restaurant Name', 'Cuisine', 'Type of Restaurant', 'City', 'Review Count', 'Rating', 'Latitude', 'Longitude', 'Price Bucket', 'Reviews', 'Similarity Score', f"Distance to {city}",'Old Price Bucket']]
     else:
         # No exact matches, fetch all restaurants
         all_similarity_scores = similarity_matrix[data.index, 0]
@@ -126,7 +127,7 @@ def get_recommendations(cuisine, restau_type, city, selected_price_buckets, num_
                         and (data.loc[index, 'Rating'] >= min_rating) and (data.loc[index, 'Review Count'] <= max_review_count)][:num_recommendations]
 
         # Return the recommended restaurants as a DataFrame
-        return data.loc[top_indices, ['Restaurant Name', 'Cuisine', 'Type of Restaurant', 'City', 'Review Count', 'Rating', 'Latitude', 'Longitude', 'Price Bucket', 'Reviews', 'Similarity Score', f"Distance to {city}"]]
+        return data.loc[top_indices, ['Restaurant Name', 'Cuisine', 'Type of Restaurant', 'City', 'Review Count', 'Rating', 'Latitude', 'Longitude', 'Price Bucket', 'Reviews', 'Similarity Score', f"Distance to {city}",'Old Price Bucket']]
 
 def format_distance(distance):
 
@@ -211,8 +212,21 @@ def display_map(recommendations, city):
     boundaries = city_boundaries[city]['coords']
         
     for boundary in boundaries:
-        folium.Polygon(locations=boundary, color='blue', opacity = 0.5,fill_color = 'blue', fill_opacity=0.01, weight = 5).add_to(map)
+        folium.Polygon(locations=boundary, color='blue', opacity = 0.5,fill_color = 'blue', fill_opacity=0.1, weight = 5).add_to(map)
 
+
+        st.markdown(
+            f"""
+            <style>
+            .stApp .leaflet-popup-content {{
+                background: #0C031E !mportant;
+                color: white !important
+            }}
+            </style>
+            """,
+            unsafe_allow_html=True
+        )
+        
     #display map
     folium_static(map)
 
@@ -248,7 +262,9 @@ def add_bg_from_local(image_file):
 
 
 def main():
+
     add_bg_from_local('background.jpg')
+    
     # Streamlit app
     st.title('MM Foodies')
     
@@ -305,7 +321,7 @@ def main():
             
         else:
             recommendations = get_recommendations(cuisine, restau_type, city, selected_price_buckets, num_recommendations)
-            recommendations_for_table = recommendations.drop(['Latitude', 'Longitude', 'Reviews', 'Review Count', 'Similarity Score', f'Distance to {city}'], axis = 1) # f"Distance to {city}" ], axis = 1)
+            recommendations_for_table = recommendations.drop(['Latitude', 'Longitude', 'Reviews', 'Review Count', 'Similarity Score', f'Distance to {city}'], axis = 1)
             recommendations_for_map = recommendations.drop(['Reviews'], axis = 1)
             
             # CSS to inject contained in a string
@@ -319,14 +335,31 @@ def main():
             # Inject CSS with Markdown
             st.markdown(hide_dataframe_row_index, unsafe_allow_html=True)
             
-            #AgGrid(recommendations_for_table, fit_columns_on_grid_load=True)
+            def format_asterisk(row):
+                if row['Old Price Bucket'] == 'price not available':
+                    return '{} *'.format(row['Price Bucket'])
+                else:
+                    return row['Price Bucket']
+                
+            def highlight_italics(row):
+                #st.write(row)
+                if row['Old Price Bucket'] == 'price not available':
+                    return ['font-style: italic', '']
+                else:
+                    return ['', '']
+
+            def hide_column(column):
+                return ['display: none' if col == column else '' for col in recommendations_for_table.columns]
+
+            # Apply custom function to DataFrame
+            recommendations_for_table['Price Bucket'] = recommendations_for_table.apply(format_asterisk, axis = 1)
             
-            # Apply the formatting function Rating
-            formatted_data = recommendations_for_table.style.format({'Rating': format_1_decimal_place})
-            
-            # Display the formatted table and map in Streamlit
-    
-            st.table(formatted_data)
+            styled_df = recommendations_for_table.style.format({'Rating': format_1_decimal_place})\
+            .apply(highlight_italics, axis=1, subset=['Price Bucket', 'Old Price Bucket'])\
+            .hide(['Old Price Bucket'], axis=1)
+        
+            st.markdown(styled_df.to_html(), unsafe_allow_html=True, help="""Price Bucket Cost Per Person:\n\ninexpensive: below ₱250\n\nmoderate: ₱250 - ₱450\n\nexpensive: ₱450 - ₱650\n\nvery expensive: above ₱650\n\n\* - Missing Price Buckets were estimated from similar restaurants\n\n""")
+            #st.table(styled_df)
             display_map(recommendations_for_map, city)
 
 if __name__ == "__main__":
